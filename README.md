@@ -33,6 +33,10 @@ python tfeat_demo.py nets/tfeat_liberty_margin_star.t7 input_video.webm object_i
 ```
 
 ## Real-time Matching demo
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=S5TGfF0HLLs
+" target="_blank"><img src="http://img.youtube.com/vi/S5TGfF0HLLs/0.jpg" 
+alt="320" width="240" height="180" border="10" /></a>
+
 [Real-time demo on using TFeat](https://www.youtube.com/watch?v=S5TGfF0HLLs)
 
 ## More information
