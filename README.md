@@ -17,7 +17,9 @@ To download the networks run the `get_nets.sh` script
 ```bash
 sh get_nets.sh
 ```
+## [New] Example usage - Tensorflow
 
+Example on how to use and train the network using Tensorflow can be found [here](https://github.com/vbalnt/tfeat/tree/master/tensorflow)
 
 ## Example usage - torch
 
