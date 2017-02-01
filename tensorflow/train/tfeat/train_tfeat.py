@@ -29,7 +29,7 @@ tf.app.flags.DEFINE_integer('num_epochs', 60,
                             """The number of iterations during the training""")
 tf.app.flags.DEFINE_float('margin', 1.0,
                           """The margin value for the loss function""")
-tf.app.flags.DEFINE_float('learning_rate', 0.01,
+tf.app.flags.DEFINE_float('learning_rate', 1e-4,
                           """The learning rate for the SGD optimization""")
 tf.app.flags.DEFINE_string('data_dir', '/tmp/patches_dataset',
                            """The default path to the patches dataset""")
@@ -39,6 +39,11 @@ tf.app.flags.DEFINE_string('test_name', 'liberty',
                            """The default dataset name for testing""")
 tf.app.flags.DEFINE_integer('num_triplets', 1280000,
                             """The default number of pairs to generate""")
+tf.app.flags.DEFINE_string('gpu_id', '0',
+                           """The default GPU id to use""")
+
+# to use only a single gpu
+os.environ['CUDA_VISIBLE_DEVICES'] = FLAGS.gpu_id
 
 def run_training():
     # load data
@@ -103,20 +108,21 @@ def run_training():
 
         # Defining training parameters
         step = tf.Variable(0, trainable=False)
-        
+
         # Add to the Graph the Ops for optmization
         train_op = tf.train.MomentumOptimizer(
             learning_rate=FLAGS.learning_rate, momentum=0.9) \
                 .minimize(loss, global_step=step)
         #train_op = tf.train.AdamOptimizer(1e-4).minimize(loss, global_step=step)
 
-        # Build the summary operation based on the TF collection of Summaries.
-        tf.scalar_summary('loss', loss)
-        tf.scalar_summary('positives', positives)
-        tf.scalar_summary('negatives', negatives)
-        summary_op = tf.merge_all_summaries()
 
-        accuracy_op = tf.scalar_summary('accuracy', accuracy_pl)
+        # Build the summary operation based on the TF collection of Summaries.
+        tf.summary.scalar('loss', loss)
+        tf.summary.scalar('positives', positives)
+        tf.summary.scalar('negatives', negatives)
+        summary_op = tf.summary.merge_all()
+
+        accuracy_op = tf.summary.scalar('accuracy', accuracy_pl)
 
         # Create a saver for writing training checkpoints.
         saver = tf.train.Saver()
@@ -125,16 +131,16 @@ def run_training():
         init_op = tf.initialize_all_variables()
 
         # Create a session for running Ops on the Graph.
-        sess = tf.Session()
+        sess = tf.Session(config=tf.ConfigProto(allow_soft_placement=True))
 
         # Run the Op to initialize the variables.
         sess.run(init_op)
 
         # Instantiate a SummaryWriter to output summaries and the Graph.
-        summary_writer_train = tf.train.SummaryWriter(
-            './logs_tensorboard/triplet/train', sess.graph)
-        summary_writer_test  = tf.train.SummaryWriter(
-            './logs_tensorboard/triplet/test',  sess.graph)
+        summary_writer_train = tf.summary.FileWriter(
+            './logs_tensorboard/triplet_relu/train', sess.graph)
+        summary_writer_test  = tf.summary.FileWriter(
+            './logs_tensorboard/triplet_relu/test',  sess.graph)
 
         def run_model(sess, global_step, data, data_ids, batch_size, train=False):
             pbar = tqdm(xrange(len(data_ids) // batch_size))
