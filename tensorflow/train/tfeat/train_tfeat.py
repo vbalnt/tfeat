@@ -41,9 +41,15 @@ tf.app.flags.DEFINE_integer('num_triplets', 1280000,
                             """The default number of pairs to generate""")
 tf.app.flags.DEFINE_string('gpu_id', '0',
                            """The default GPU id to use""")
+tf.app.flags.DEFINE_integer('seed', 666,
+                            """random seed (default: 666)""")
 
 # to use only a single gpu
 os.environ['CUDA_VISIBLE_DEVICES'] = FLAGS.gpu_id
+
+# set seed for all the random stuff
+np.random.seed(FLAGS.seed)
+tf.set_random_seed(FLAGS.seed)
 
 def run_training():
     # load data
@@ -107,7 +113,19 @@ def run_training():
             tfeat_anchor, tfeat_positive, tfeat_negative, FLAGS.margin)
 
         # Defining training parameters
-        step = tf.Variable(0, trainable=False)
+        step = tf.Variable(0, trainable=False)        
+                
+        '''learning_rate = tf.train.exponential_decay(
+					FLAGS.learning_rate, # Base learning rate.
+					global_step=step,
+					decay_steps= FLAGS.batch_size,
+					decay_rate=1-0.000001,
+					staircase=False)
+        
+        # Add to the Graph the Ops for optmization
+        train_op = tf.train.MomentumOptimizer(
+            learning_rate=learning_rate, momentum=0.9) \
+                .minimize(loss, global_step=step)'''
 
         # Add to the Graph the Ops for optmization
         train_op = tf.train.MomentumOptimizer(
