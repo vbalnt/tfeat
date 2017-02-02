@@ -7,17 +7,17 @@ from tqdm import tqdm
 
 class UBCDataset(object):
     # the extension of the images containing the patches
-    IMAGE_EXT  = 'bmp'
+    IMAGE_EXT = 'bmp'
     # the size of the patches once extracted
     PATCH_SIZE = 64
     # the number of patches per row/column in the
     # image containing all the patches
-    PATCHES_PER_ROW   = 16
+    PATCHES_PER_ROW = 16
     PATCHES_PER_IMAGE = PATCHES_PER_ROW**2
 
     def __init__(self, base_dir, test=False):
         # check that the directories exist
-        assert os.path.isdir(base_dir) == True, \
+        assert os.path.isdir(base_dir), \
             "The given directory doesn't exist: %s" % base_dir
 
         # the dataset base directory
@@ -35,32 +35,19 @@ class UBCDataset(object):
         }
 
         # the file containing the matches
-        self.matches_fname = 'm50_100000_100000_0.txt'
-
-    '''def get_batch(self, data, data_ids, step, batch_size):
-        # compute the offset to get the correct batch
-        offset = step * batch_size % len(data_ids)
-        # get a sample batch from the training data
-        ids = data_ids[offset:offset + batch_size]
-
-        out1 = data[ids[:, 0]]
-        out2 = data[ids[:, 1]]
-        out3 = data[ids[:, 2]]
-        return out1, out2, out3'''
+        self.matches_filename = 'm50_100000_100000_0.txt'
 
     def load_by_name(self, name, patch_size=32, num_channels=1, debug=True):
         assert name in self._data.keys(), \
             "Dataset doesn't exist: %s" % name
-        assert os.path.exists(os.path.join(self._base_dir, name)) == True, \
+        assert os.path.exists(os.path.join(self._base_dir, name)), \
             "The dataset directory doesn't exist: %s" % name
         # check if the dataset is already loaded
         if self._data[name] is not None:
             print '[INFO] Dataset is cached: %s' % name
             return
-        # load the images containing the patches
-        img_files = self._load_image_fnames(self._base_dir, name)
         # load the patches from the images
-        patches = self._load_patches(img_files, name, patch_size, num_channels)
+        patches = self._load_patches(name, patch_size, num_channels)
         # load the labels
         labels = self._load_labels(self._base_dir, name)
         # load the dataset ground truth matches
@@ -70,57 +57,21 @@ class UBCDataset(object):
         # the dataset, we keep only those that have labels
         self._data[name] = dict()
         self._data[name]['patches'] = patches[0:min(len(labels), len(patches))]
-        self._data[name]['labels']  =  labels[0:min(len(labels), len(patches))]
+        self._data[name]['labels'] = labels[0:min(len(labels), len(patches))]
         self._data[name]['matches'] = matches
 
         # debug info after loading
         if debug:
              print '-- Dataset loaded:    %s' % name
-             print '-- Number of images:  %s' % len(img_files)
              print '-- Number of patches: %s' % len(self._data[name]['patches'])
              print '-- Number of labels:  %s' % len(self._data[name]['labels'])
              print '-- Number of ulabels: %s' % len(np.unique(labels))
              print '-- Number of matches: %s' % len(matches)
 
-    '''def generate_triplets(self, name, n_triplets):
-        # retrieve loaded patches and labels
-        labels = self._get_labels(name)
-        # group labels in order to have O(1) search
-        count = collections.Counter(labels)
-        # index the labels in order to have O(1) search
-        indices = self._create_indices(labels)
-        # range for the sampling
-        labels_size = len(labels) - 1
-        # triplets ids
-        triplets = []
-        # generate the triplets
-        pbar = tqdm(xrange(n_triplets))
-        for x in pbar:
-            pbar.set_description('Generating triplets %s' % name)
-            # pick a random id for anchor
-            idx = np.random.randint(labels_size)
-            # count number of anchor occurrences
-            num_samples = count[labels[idx]]
-            # the global index to the id
-            begin_positives = indices[labels[idx]]
-            # generate two samples to the id
-            offset_a, offset_p = np.random.choice(np.arange(num_samples),
-                                                  size=2, replace=False)
-            idx_a = begin_positives + offset_a
-            idx_p = begin_positives + offset_p
-            # find index of the same 3D but not same as before
-            idx_n = np.random.randint(labels_size)
-            while labels[idx_n] == labels[idx_a] and \
-                  labels[idx_n] == labels[idx_p]:
-                idx_n = np.random.randint(labels_size)
-                # pick and append triplets to the buffer
-                triplets.append([idx_a, idx_p, idx_n])
-            return triplets'''
-
     def generate_stats(self, name):
         print '-- Computing dataset mean: %s ...' % name
         # compute the mean and std of all patches
-        patches = self._get_patches(name)
+        patches = self.get_patches(name)
         mean, std = self._compute_mean_and_std(patches)
         print '-- Computing dataset mean: %s ... OK' % name
         print '-- Mean: %s' % mean
@@ -131,33 +82,36 @@ class UBCDataset(object):
         """
         Return a list containing the ground truth matches
         """
-        fname = os.path.join(base_dir, name, self.matches_fname)
-        assert os.path.isfile(fname), 'Not a file: %s' % file
+        file_name = os.path.join(base_dir, name, self.matches_filename)
+        assert os.path.isfile(file_name), 'Not a file: %s' % file
         # read file and keep only 3D point ID and 1 if is the same, otherwise 0
         matches = []
-        with open(fname, 'r') as f:
+        with open(file_name, 'r') as f:
             for line in f:
                 l = line.split()
                 matches.append([int(l[0]), int(l[3]), int(l[1] == l[4])])
         return np.asarray(matches)
 
-    def _load_image_fnames(self, base_dir, dir_name):
-        """
-        Return a list with the file names of the images containing the patches
-        """
-        files = []
-        # find those files with the specified extension
-        dataset_dir = os.path.join(base_dir, dir_name)
-        for file in os.listdir(dataset_dir):
-            if file.endswith(self.IMAGE_EXT):
-                files.append(os.path.join(dataset_dir, file))
-        return sorted(files) # sort files in ascend order to keep relations
-
-    def _load_patches(self, img_files, name, patch_size, num_channels):
+    def _load_patches(self, name, patch_size, num_channels):
         """
         Return a list containing all the patches
         """
+        def load_image_filenames(base_dir, dir_name):
+            """
+            Return a list with the file names of the images containing the patches
+            """
+            files = []
+            # find those files with the specified extension
+            dataset_dir = os.path.join(base_dir, dir_name)
+            for file_name in os.listdir(dataset_dir):
+                if file_name.endswith(self.IMAGE_EXT):
+                    files.append(os.path.join(dataset_dir, file_name))
+            return sorted(files)  # sort files in ascend order to keep relations
+
         patches_all = []
+
+        # load the images containing the patches
+        img_files = load_image_filenames(self._base_dir, name)
         # reduce the number of files to load if we are in testing mode
         img_files = img_files [0:self.n] if self.test else img_files
         # load patches
@@ -189,27 +143,16 @@ class UBCDataset(object):
         """
         Return a list containing all the labels for each patch
         """
-        info_fname = os.path.join(base_dir, dir_name, 'info.txt')
-        assert os.path.isfile(info_fname), 'Not a file: %s' % file
+        info_filename = os.path.join(base_dir, dir_name, 'info.txt')
+        assert os.path.isfile(info_filename), 'Not a file: %s' % file
         # read file and keep only 3D point ID
         labels = []
-        with open(info_fname, 'r') as f:
+        with open(info_filename, 'r') as f:
             for line in f:
                 labels.append(int(line.split()[0]))
         return np.asarray(labels) if not self.test \
             else np.asarray(labels[0:self.n])
 
-    '''def _create_indices(self, labels):
-        old = labels[0]
-        indices = dict()
-        indices[old] = 0
-        for x in xrange(len(labels)-1):
-            new = labels[x+1]
-            if old != new:
-                indices[new] = x+1
-            old = new
-        return indices'''
- 
     def _compute_mean_and_std(self, patches):
         """
         Return the mean and the std given a set of patches.
