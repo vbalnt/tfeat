@@ -2,7 +2,7 @@
 scores for better matches, and assumes label == 1 means match.
 """
 import operator
-import math
+
 
 def ErrorRateAt95Recall(labels, scores):
     recall_point = 0.95
