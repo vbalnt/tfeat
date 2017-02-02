@@ -2,7 +2,7 @@ import tensorflow as tf
 import numpy as np
 
 import os
-import cv2  # imported here just o set the random seed
+import cv2  # imported here just to set the random seed
 
 from models.tfeat import TFeat
 from datasets.ubc import UBCDataset
@@ -96,7 +96,7 @@ def run_training():
 
     # Tell TensorFlow that the model will be built into the default Graph.
     with tf.Graph().as_default():
-        # the random seed must be set at graph level, otherwise you'll F**k Up :D
+        # the random seed must be set at graph level, otherwise you'll be F**k Up :D
         tf.set_random_seed(FLAGS.seed)
 
         with tf.name_scope('inputs'):
