@@ -64,6 +64,10 @@ LOG_DIR = os.path.join(FLAGS.log_dir, FLAGS.log_name)
 np.random.seed(FLAGS.seed)
 cv2.setRNGSeed(FLAGS.seed)
 
+# log paramters to a file
+with open('flags.txt', 'w') as text_file:
+    text_file.write(str(FLAGS.__flags))
+
 
 def run_training():
     # load data
@@ -164,7 +168,10 @@ def run_training():
         init_op = tf.initialize_all_variables()
 
         # Create a session for running Ops on the Graph.
-        session = tf.Session(config=tf.ConfigProto(allow_soft_placement=True))
+        config = tf.ConfigProto()
+        config.allow_soft_placement = True
+        config.gpu_options.allow_growth = True
+        session = tf.Session(config=config)
 
         # Run the Op to initialize the variables.
         session.run(init_op)
