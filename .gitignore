@@ -3,3 +3,5 @@ event*
 *.meta
 *checkpoint*
 model_*
+.idea*
+*flags.txt*

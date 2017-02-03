@@ -18,42 +18,46 @@ FLAGS = tf.app.flags.FLAGS
 
 # network parameters
 tf.app.flags.DEFINE_integer('image_size', 32,
-                            """The size of the images to process""")
+                            """The size of the images to process (default: 32)""")
 tf.app.flags.DEFINE_integer('num_channels', 1,
-                            """The number of channels in the images to process""")
+                            """The number of channels per image (default: 1)""")
 tf.app.flags.DEFINE_string('activation', 'tanh',
-                           """The default activation function during the training""")
+                           """The default activation function during the training.
+                           Supported: tanh, relu, relu6 (default: tanh)""")
 # training parameters
 tf.app.flags.DEFINE_string('train_name', 'notredame',
-                           """The default dataset name for training""")
+                           """The default dataset name for training.
+                            Supported: notredame, liberty, yosemite. (default: notredame)""")
 tf.app.flags.DEFINE_string('test_name', 'liberty',
-                           """The default dataset name for testing""")
-tf.app.flags.DEFINE_integer('num_triplets', 128,
-                            """The default number of pairs to generate""")
+                           """The default dataset name for testing.
+                           Supported: notredame, liberty, yosemite. (default: liberty)""")
+tf.app.flags.DEFINE_integer('num_triplets', 1280000,
+                            """The number of triplets to generate (default: 1280000)""")
 tf.app.flags.DEFINE_integer('batch_size', 128,
-                            """The size of the mini-batch""")
+                            """The size of the mini-batch (default: 128) """)
 tf.app.flags.DEFINE_integer('num_epochs', 60,
-                            """The number of iterations during the training""")
+                            """The number of training epochs (default: 60)""")
 tf.app.flags.DEFINE_float('margin', 1.0,
-                          """The margin value for the loss function""")
+                          """The margin value for the loss function (default: 1.0)""")
 tf.app.flags.DEFINE_float('learning_rate', 1e-4,
-                          """The learning rate for the SGD optimization""")
+                          """The initial learning rate (default: 1e-4)""")
 tf.app.flags.DEFINE_float('weight_decay', 1e-4,
-                          """weight decay (default: 1e-4)""")
+                          """The weight decay (default: 1e-4)""")
 tf.app.flags.DEFINE_string('optimizer', 'momentum',
-                           """The optimizer to use (default: SGD)""")
+                           """The optimizer to use during the training.
+                           Supported: Momentum, Adam. (default: Momentum)""")
 # logging stuff
 tf.app.flags.DEFINE_string('data_dir', '/tmp/patches_dataset',
-                           """The default path to the patches dataset""")
+                           """The path to the patches dataset. (default: /tmp/patches_dataset)""")
 tf.app.flags.DEFINE_string('log_dir', '/tmp/tensorboard_log',
-                           """The default path to the logs directory""")
-tf.app.flags.DEFINE_string('log_name', 'triplet_toy',
-                           """The default name for logging""")
+                           """The path to the logs directory (default: /tmp/tensorboard_log)""")
+tf.app.flags.DEFINE_string('log_name', 'triplet_tanh',
+                           """The name for logging (default: triplet_tanh""")
 # device parameters
 tf.app.flags.DEFINE_string('gpu_id', '1',
-                           """The default GPU id to use""")
+                           """The default GPU id to use (default: 1)""")
 tf.app.flags.DEFINE_integer('seed', 666,
-                            """random seed (default: 666)""")
+                            """The random seed (default: 666)""")
 
 # to use only a single gpu
 os.environ['CUDA_VISIBLE_DEVICES'] = FLAGS.gpu_id
@@ -64,7 +68,7 @@ LOG_DIR = os.path.join(FLAGS.log_dir, FLAGS.log_name)
 np.random.seed(FLAGS.seed)
 cv2.setRNGSeed(FLAGS.seed)
 
-# log paramters to a file
+# log parameters to a file
 with open('flags.txt', 'w') as text_file:
     text_file.write(str(FLAGS.__flags))
 
