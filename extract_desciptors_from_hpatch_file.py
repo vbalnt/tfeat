@@ -7,7 +7,7 @@ import torchfile
 import os
 import sys
 import time
-sys.path.insert(0, '/home/ubuntu/dev/opencv-3.1/build/lib')
+#sys.path.insert(0, '/home/ubuntu/dev/opencv-3.1/build/lib')
 import cv2
 TFEAT_PATCH_SIZE = 32
 TFEAT_DESC_SIZE = 128
