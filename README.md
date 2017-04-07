@@ -29,10 +29,13 @@ Example on how to use the TFeat descriptor in Torch can be found [here](https://
 [tfeat_demo.py](tfeat_demo.py) shows how to use the TFeat descriptor using python and openCV. 
 
 To use TFeat to detect an object `object_img.png` in a video `input_video.webm` using feature point matching
-
-To use TFeat to just describe patches in image, run ./extract_desciptors_from_hpatch_file.py imgs/ref.png ref.TFEAT
 ```bash
 python tfeat_demo.py nets/tfeat_liberty_margin_star.t7 input_video.webm object_img.png'
+```
+
+To use TFeat to just describe patches in image, run 
+```bash
+./extract_desciptors_from_hpatch_file.py imgs/ref.png ref.TFEAT
 ```
 
 ## Real-time Matching demo
