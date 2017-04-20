@@ -25,6 +25,8 @@ Example on how to use and train the network using Pytorch can be found [here](ht
 
 Example on how to use and train the network using Tensorflow can be found [here](https://github.com/vbalnt/tfeat/tree/master/tensorflow)
 
+**NOTE:** the current version doesn't converge as expected. We highly recommend to use Pytorch version in order to reproduce the paper results.
+
 ## Example usage - torch
 
 Example on how to use the TFeat descriptor in Torch can be found [here](https://github.com/vbalnt/pnnet/blob/master/eval.lua)
