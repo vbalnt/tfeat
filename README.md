@@ -17,21 +17,24 @@ To download the networks run the `get_nets.sh` script
 ```bash
 sh get_nets.sh
 ```
-##  [New] Example usage - PyTorch
+##  [New] Training code - PyTorch
 
 Example on how to use and train the network using Pytorch can be found [here](https://github.com/edgarriba/examples/tree/master/triplet)
 
-## Example usage - Tensorflow
+## Example usage and training code- torch
+
+Example on how to use the TFeat descriptor in Torch can be found [here](https://github.com/vbalnt/pnnet/blob/master/eval.lua)
+More information and the full training code can be found in the [pnnet repository](https://github.com/vbalnt/pnnet)
+
+
+## Example usage and training code - Tensorflow
 
 Example on how to use and train the network using Tensorflow can be found [here](https://github.com/vbalnt/tfeat/tree/master/tensorflow)
 
 **NOTE:** the current version doesn't converge as expected. We highly recommend to use Pytorch version in order to reproduce the paper results.
 
-## Example usage - torch
 
-Example on how to use the TFeat descriptor in Torch can be found [here](https://github.com/vbalnt/pnnet/blob/master/eval.lua)
-
-## Example usage - python
+## Example usage - object tracking in video from image template 
 [tfeat_demo.py](tfeat_demo.py) shows how to use the TFeat descriptor using python and openCV. 
 
 To use TFeat to detect an object `object_img.png` in a video `input_video.webm` using feature point matching
@@ -44,12 +47,9 @@ To use TFeat to just describe patches in image, run
 ./extract_desciptors_from_hpatch_file.py imgs/ref.png ref.TFEAT
 ```
 
-## Real-time Matching demo
+## Real-time tracking demo
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=S5TGfF0HLLs
 " target="_blank"><img src="http://img.youtube.com/vi/S5TGfF0HLLs/0.jpg" 
 alt="320" width="240" height="180" border="10" /></a>
 
 [Real-time demo on using TFeat](https://www.youtube.com/watch?v=S5TGfF0HLLs)
-
-## More information
-More information and the full training code can be found in the [pnnet repository](https://github.com/vbalnt/pnnet)
