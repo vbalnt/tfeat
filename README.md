@@ -19,17 +19,17 @@ sh get_nets.sh
 ```
 ##  [New] Training code - PyTorch
 
-Example on how to use and train the network using Pytorch can be found [here](https://github.com/edgarriba/examples/tree/master/triplet)
+Example on how to use and train the network using Pytorch can be found [here](https://github.com/edgarriba/examples/tree/master/triplet).
 
-## Example usage and training code- torch
+## Example usage and training code - Torch
 
-Example on how to use the TFeat descriptor in Torch can be found [here](https://github.com/vbalnt/pnnet/blob/master/eval.lua)
-More information and the full training code can be found in the [pnnet repository](https://github.com/vbalnt/pnnet)
+Example on how to use the TFeat descriptor in Torch can be found [here](https://github.com/vbalnt/pnnet/blob/master/eval.lua).
+More information and the full training code can be found in the [pnnet repository](https://github.com/vbalnt/pnnet).
 
 
 ## Example usage and training code - Tensorflow
 
-Example on how to use and train the network using Tensorflow can be found [here](https://github.com/vbalnt/tfeat/tree/master/tensorflow)
+Example on how to use and train the network using Tensorflow can be found [here](https://github.com/vbalnt/tfeat/tree/master/tensorflow).
 
 **NOTE:** the current version doesn't converge as expected. We highly recommend to use Pytorch version in order to reproduce the paper results.
 
