@@ -6,24 +6,22 @@ layer {
   input_param { shape: { dim: 256 dim: 1 dim: 32 dim: 32 } }
 }
 
-
 layer {
   name: "data_norm"
   type: "Scale"
   bottom: "data"
   top: "data_norm"
   scale_param {
-      bias_term: true
-       filler {
-      type: "constant"
-      value: 0.019415679
+     filler {
+        type: "constant"
+        value: 0.019415679
      }
- bias_filler {
-      type: "constant"
-      value: -2.19689888
-     }
+     bias_term: true 
+     bias_filler {
+         type: "constant"
+         value: -2.19689888
       }
-
+  }
 }
   
     
@@ -90,13 +88,9 @@ layer {
   }
 }
   
-   layer {
+layer {
   name: "tanh3"
   type: "TanH"
   bottom: "ip1"
   top: "tanh3"
 } 
- 
-
-
-  
