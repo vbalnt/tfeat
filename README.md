@@ -17,7 +17,12 @@ To download the networks run the `get_nets.sh` script
 ```bash
 sh get_nets.sh
 ```
-##  [New] Training code - PyTorch
+
+## [New] Example usage code - Caffe
+
+Trained model on Caffe and Python script for testing mode can be found [here](https://github.com/vbalnt/tfeat/tree/master/caffe)..
+
+## [New] Training code - PyTorch
 
 Example on how to use and train the network using Pytorch can be found [here](https://github.com/edgarriba/examples/tree/master/triplet).
 
