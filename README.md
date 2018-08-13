@@ -1,60 +1,54 @@
 # TFeat shallow convolutional patch descriptor
-Code for the BMVC 2016 paper [Learning local feature descriptors with triplets and shallow convolutional neural networks](http://www.iis.ee.ic.ac.uk/~vbalnt/shallow_descr/TFeat_paper.pdf)
+Code for the BMVC 2016 paper [Learning local feature descriptors with triplets and shallow convolutional neural networks](http://www.bmva.org/bmvc/2016/papers/paper119/paper119.pdf)
 
-## Network description
+## Pre-trained models
+We provide the following pre-trained models:
 
-We provide 4 variants of the TFeat descriptor trained with combinations of different loss functions, and with and without in-triplet anchor swap. For more details check the paper. 
 
-| network       | description   |
-| ------------- |:-------------:|
-| tfeat-ratio   | ratio w/out anchor swap |
-| tfeat-ratio*  | ratio with anchor swap  |
-| tfeat-margin  | margin w/out anchor swap|
-| tfeat-margin* | margin with anchor swap |
+| network name      | model link                                      | training dataset   |
+|-------------------+-------------------------------------------------+--------------------|
+| `tfeat-liberty`   | [tfeat-liberty.params](./tfeat-liberty.params)  | liberty (UBC)      |
+| `tfeat-yosemite`  | [tfeat-liberty.params](./tfeat-yosemite.params) | yosemite (UBC)     |
+| `tfeat-notredame` | coming soon...                                  | notredame (UBC)    |
+| `tfeat-hpatches`  | coming soon...                                  | HPatches (split A) |
+| `tfeat-all`       | coming soon...                                  | All the above      |
 
-To download the networks run the `get_nets.sh` script 
+## Quick start guide
+To run `TFeat` on a tensor of patches:
 
-```bash
-sh get_nets.sh
+```python
+tfeat = tfeat_model.TNet()
+net_name = 'tfeat-liberty'
+models_path = 'pretrained-models'
+net_name = 'tfeat-liberty'
+tfeat.load_state_dict(torch.load(os.path.join(models_path,net_name+".params")))
+tfeat.cuda()
+tfeat.eval()
+
+x = torch.rand(10,1,32,32).cuda()
+descrs = tfeat(x)
+print(descrs.size())
+
+#torch.Size([10, 128])
 ```
 
-## [New] Example usage code - Caffe
+Note that no normalisation is needed for the input patches, 
+it is done internally inside the network. 
 
-Trained model on Caffe and Python script for testing mode can be found [here](https://github.com/vbalnt/tfeat/tree/master/caffe)..
+## Testing `TFeat`: Examples (WIP)
+We provide an `ipython` notebook that shows how to load and use 
+the pre-trained networks. We also provide the following examples:
 
-## [New] Training code - PyTorch
+- extracting descriptors from image patches
+- matching two images using `openCV`
+- matching two images using `vlfeat`
 
-Example on how to use and train the network using Pytorch can be found [here](https://github.com/edgarriba/examples/tree/master/triplet).
+For the testing example code, check [tfeat-test notebook](tfeat-test.ipynb)
 
-## Example usage and training code - Torch
+## Re-training `TFeat`
+We provide an `ipython` notebook with examples on how to train
+`TFeat`.  Training can either use the `UBC` datasets `Liberty,
+Notredame, Yosemite`, the `HPatches` dataset, and combinations 
+of all the datasets. 
 
-Example on how to use the TFeat descriptor in Torch can be found [here](https://github.com/vbalnt/pnnet/blob/master/eval.lua).
-More information and the full training code can be found in the [pnnet repository](https://github.com/vbalnt/pnnet).
-
-
-## Example usage and training code - Tensorflow
-
-Example on how to use and train the network using Tensorflow can be found [here](https://github.com/vbalnt/tfeat/tree/master/tensorflow).
-
-**NOTE:** the current version doesn't converge as expected. We highly recommend to use Pytorch version in order to reproduce the paper results.
-
-
-## Example usage - object tracking in video from image template 
-[tfeat_demo.py](tfeat_demo.py) shows how to use the TFeat descriptor using python and openCV. 
-
-To use TFeat to detect an object `object_img.png` in a video `input_video.webm` using feature point matching
-```bash
-python tfeat_demo.py nets/tfeat_liberty_margin_star.t7 input_video.webm object_img.png'
-```
-
-To use TFeat to just describe patches in image, run 
-```bash
-./extract_desciptors_from_hpatch_file.py imgs/ref.png ref.TFEAT
-```
-
-## Real-time tracking demo
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=S5TGfF0HLLs
-" target="_blank"><img src="http://img.youtube.com/vi/S5TGfF0HLLs/0.jpg" 
-alt="320" width="240" height="180" border="10" /></a>
-
-[Real-time demo on using TFeat](https://www.youtube.com/watch?v=S5TGfF0HLLs)
+For the training code, check [tfeat-train notebook](tfeat-train.ipynb)

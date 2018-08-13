@@ -1,5 +1,18 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
 *.pyc
 event*
 *.meta
 *checkpoint*
 model_*
+liberty/
+notredame/
+yosemite/
+fpr.txt
+liberty.pt
+notredame.pt
+yosemite.pt
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
