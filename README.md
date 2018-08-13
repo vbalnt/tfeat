@@ -7,7 +7,7 @@ We provide the following pre-trained models:
 | network name      | model link                                                        | training dataset   |
 | -------------     | :-------------:                                                   | -----:             |
 | `tfeat-liberty`   | [tfeat-liberty.params](./pretrained-models/tfeat-liberty.params)  | liberty (UBC)      |
-| `tfeat-yosemite`  | [tfeat-liberty.params](./pretrained-models/tfeat-yosemite.params) | yosemite (UBC)     |
+| `tfeat-yosemite`  | [tfeat-yosemite.params](./pretrained-models/tfeat-yosemite.params) | yosemite (UBC)     |
 | `tfeat-notredame` | coming soon...                                                    | notredame (UBC)    |
 | `tfeat-ubc`       | coming soon...                                                    | all UBC            |
 | `tfeat-hpatches`  | coming soon...                                                    | HPatches (split A) |
