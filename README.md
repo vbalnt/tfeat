@@ -8,7 +8,7 @@ We provide the following pre-trained models:
 | -------------     | :-------------:                                                   | -----:             |
 | `tfeat-liberty`   | [tfeat-liberty.params](./pretrained-models/tfeat-liberty.params)  | liberty (UBC)      |
 | `tfeat-yosemite`  | [tfeat-yosemite.params](./pretrained-models/tfeat-yosemite.params) | yosemite (UBC)     |
-| `tfeat-notredame` | coming soon...                                                    | notredame (UBC)    |
+| `tfeat-notredame` | [tfeat-notredame.params](./pretrained-models/tfeat-notredame.params) | notredame (UBC)    |
 | `tfeat-ubc`       | coming soon...                                                    | all UBC            |
 | `tfeat-hpatches`  | coming soon...                                                    | HPatches (split A) |
 | `tfeat-all`       | coming soon...                                                    | All the above      |
