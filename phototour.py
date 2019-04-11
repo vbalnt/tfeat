@@ -109,6 +109,7 @@ class PhotoTour(data.Dataset):
 
         # load the serialized data
         self.data, self.labels, self.matches = torch.load(self.data_file)
+        self.data_len = self.data.shape[0]
         self.labels = self.labels.numpy()
         self.ids = np.unique(self.labels)
         self.nids = self.ids.shape[0]
@@ -124,9 +125,9 @@ class PhotoTour(data.Dataset):
         """
 
         # fix the random seed issue with numpy and multiprocessing
-        seed = random.randrange(4294967295)
-        np.random.seed(seed=seed)
-        
+        #seed = random.randrange(4294967295)
+        #np.random.seed(seed=seed)
+
         # testing mode: 100k pairs from Brown's original paper
         # note: testing mode can only be pairs
         if not self.train:
@@ -143,18 +144,25 @@ class PhotoTour(data.Dataset):
             if self.mode == 'pairs':
                 lbl = random.randint(0, 1)
                 if lbl==0: #negative pair
-                    pair_ids = np.random.choice(self.nids, 2, replace=False)
-                    mask_L = np.where(self.labels==pair_ids[0])[0]
-                    mask_R = np.where(self.labels==pair_ids[1])[0]
-                    idx_L = np.random.choice(mask_L)
-                    idx_R = np.random.choice(mask_R)
+                    idx_L = random.randrange(self.data_len)
+                    L_label = self.labels[idx_L]
+                    idx_R = random.randrange(self.data_len)
+                    R_label = self.labels[idx_R]
+                    while R_label==L_label :
+                        idx_R = random.randrange(self.data_len)
+                        R_label = self.labels[
+                            idx_R]
                 else: #positive pair
-                    pair_id = np.random.choice(self.nids)
-                    mask = np.where(self.labels==pair_id)[0]
-                    idx_L,idx_R = np.random.choice(mask,2, replace=False)
-                    
-                
-                
+                    idx_L = random.randrange(self.data_len)
+                    L_label = self.labels[idx_L]
+                    label_search_range_start = max(0,idx_L-20)
+                    label_search_range_end = min(self.data_len,idx_L+20)
+                    sub_labels = self.labels[label_search_range_start:label_search_range_end]
+                    mask_pos = np.where(sub_labels==L_label)[0]
+                    idx_L,idx_R = np.random.choice(mask_pos,2, replace=False)
+                    idx_L = idx_L + label_search_range_start
+                    idx_R = idx_R + label_search_range_start
+
                 data1, data2 = self.data[idx_L], self.data[idx_R]
                 patches = [data1,data2]
                 patches = [p.numpy() for p in patches]
@@ -163,11 +171,21 @@ class PhotoTour(data.Dataset):
                 return data1,data2,lbl
 
             elif self.mode == 'triplets':
-                pair_ids = np.random.choice(self.nids, 2, replace=False)
-                mask_pos = np.where(self.labels==pair_ids[0])[0]
+                idx_a = random.randrange(self.data_len)
+                a_label = self.labels[idx_a]
+                idx_n = random.randrange(self.data_len)
+                n_label = self.labels[idx_n]
+                while n_label==a_label :
+                    idx_n = random.randrange(self.data_len)
+                    n_label = self.labels[idx_n]
+                #find the next idx_p
+                label_search_range_start = max(0,idx_a-20)
+                label_search_range_end = min(self.data_len,idx_a+20)
+                sub_labels = self.labels[label_search_range_start:label_search_range_end]
+                mask_pos = np.where(sub_labels==a_label)[0]
                 idx_a,idx_p = np.random.choice(mask_pos,2, replace=False)
-                mask_neg = np.where(self.labels==pair_ids[1])[0]
-                idx_n = np.random.choice(mask_neg)
+                idx_a = idx_a + label_search_range_start
+                idx_p = idx_p + label_search_range_start
                     
                 data_a, data_p, data_n = self.data[idx_a], self.data[idx_p], self.data[idx_n]
                 patches = [data_a, data_p, data_n]
@@ -288,3 +306,22 @@ def read_matches_files(data_dir, matches_file):
             l = line.split()
             matches.append([int(l[0]), int(l[3]), int(l[1] == l[4])])
     return torch.LongTensor(matches)
+from tqdm import tqdm 
+import argparse
+if __name__=='__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--data_dir',help='this is root directory where training/evaluation data are stored/downloaded',required=True)
+    parser.add_argument('--mode',help='training mode of tfeat descriptor, can be pair or triplet,it is enum type, could be pair|triplet',required=False,default='triplets')
+    parser.add_argument('--name',help='The name of dataset to test,it is enum type, could be liberty|yosemite|notredame ',required=False,default='liberty')
+
+    args = vars(parser.parse_args())
+    
+    data_path = args['data_dir']
+    dataset_name = args['name']
+    train_db = PhotoTour(data_path,dataset_name, download=True, train=True, mode = args['mode'], augment = True, nsamples=1000000)
+    train_loader = torch.utils.data.DataLoader(train_db,
+                                             batch_size=300, shuffle=False,
+                                             num_workers=2)
+    for batch_idx, (data_a, data_p, data_n) in tqdm(enumerate(train_loader)): 
+        if batch_idx==100000: 
+            break
