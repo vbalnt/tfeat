@@ -14,6 +14,21 @@ We provide the following pre-trained models:
 | `tfeat-all`       | coming soon...                                                    | All the above      |
 
 
+## Pre-trained models usage with Kornia
+
+TFeat has been integrated into [Kornia](https://github.com/kornia/kornia)
+
+First install Kornia: `pip install kornia`
+
+```python
+import torch
+import kornia as K
+
+input = torch.rand(16, 1, 32, 32)
+tfeat = K.feature.TFeat(pretrained=True)
+descs = tfeat(input) # 16x128
+```
+
 ## Quick start guide
 To run `TFeat` on a tensor of patches:
 
